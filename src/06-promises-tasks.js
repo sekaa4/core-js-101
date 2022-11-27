@@ -28,8 +28,14 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  return new Promise((res, rej) => {
+    if (isPositiveAnswer) {
+      res('Hooray!!! She said "Yes"!');
+    } else if (isPositiveAnswer === false) {
+      res('Oh no, she said "No".');
+    } else rej(new Error('Wrong parameter is passed! Ask her again.'));
+  });
 }
 
 
@@ -48,8 +54,8 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -71,8 +77,8 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -92,8 +98,40 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  return new Promise((res) => {
+    (async () => {
+      const results = [];
+      await array.reduce(async (acc, cur) => {
+        try {
+          await acc;
+          const value = await cur;
+
+          results.push(value);
+          return acc;
+        } catch (e) {
+          return e.message;
+        }
+      }, 0);
+      res(results.reduce(action));
+    })();
+
+    // (async () => {
+    //   const args = [];
+    //   for (const promise of array) {
+    //     try {
+    //       const res = await promise;
+    //       args.push(res);
+    //     } catch (err) { }
+    //   }
+    //   console.log(args);
+
+    //   const result = args.reduce(action);
+    //   console.log(result);
+
+    //   res(result);
+    // })();
+  });
 }
 
 module.exports = {
